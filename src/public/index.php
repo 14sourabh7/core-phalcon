@@ -11,7 +11,8 @@ use Phalcon\Mvc\Application;
 use Phalcon\Url;
 use Phalcon\Db\Adapter\Pdo\Mysql;
 use Phalcon\Config;
-
+use Phalcon\Session\Manager;
+use Phalcon\Session\Adapter\Stream;
 
 $config = new Config([]);
 
@@ -70,6 +71,27 @@ $container->set(
 );
 
 
+$container->set(
+    'session',
+    function () {
+        $session = new Manager();
+        $files = new Stream(
+            [
+                'savePath' => '/tmp',
+            ]
+        );
+        $session->setAdapter($files);
+        return $session;
+    }
+);
+$container->set(
+    'datetime',
+    function () {
+        $timestamp = time();
+        $date_time = date("d-m-Y (D) H:i:s", $timestamp);
+        return $date_time;
+    }
+);
 try {
     // Handle the request
     $response = $application->handle(

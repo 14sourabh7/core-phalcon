@@ -2,25 +2,20 @@
 
 use Phalcon\Mvc\Controller;
 use Phalcon\Http\Response;
-use Phalcon\Session\Manager;
-use Phalcon\Session\Adapter\Stream;
 use Phalcon\Http\Response\Cookies;
-use Phalcon\Di;
-use Phalcon\Di\DiInterface;
 
 class UserController extends Controller
 {
 
     public function indexAction()
     {
-
         $response = new Response();
 
         /**
          * di container call
          */
-        $container = $this->setd();
-        $session = $container->get('session');
+
+        $session = $this->session;
         $session->start();
         $login = $session->get('login');
         $log = $_COOKIE['login'];
@@ -31,7 +26,7 @@ class UserController extends Controller
             /**
              * fetching date time from datetime 
              */
-            $time = $container->get('datetime');
+            $time = $this->datetime;
             $this->view->time = $time;
             $user = Users::find();
             $this->view->users = $user;
@@ -90,8 +85,7 @@ class UserController extends Controller
         /**
          * calling session di
          */
-        $container = $this->setd();
-        $session = $container->get('session');
+        $session = $this->session;
 
         $response = new Response();
 
@@ -130,62 +124,7 @@ class UserController extends Controller
                 $response->setContent("Authenication failed");
                 $response->send();
                 die;
-                die;
             }
         }
-    }
-
-
-    /**
-     * getd()
-     * function to initialize Di object
-     *
-     * @return void
-     */
-    public function getd()
-    {
-        return
-            new Di();
-    }
-
-    /**
-     * function to register various di services
-     *
-     * @return void
-     */
-    public function setd()
-    {
-        $container = $this->getd();
-
-
-        /**
-         * session service register
-         */
-        $container->set(
-            'session',
-            function () {
-                $session = new Manager();
-                $files = new Stream(
-                    [
-                        'savePath' => '/tmp',
-                    ]
-                );
-                $session->setAdapter($files);
-                return $session;
-            }
-        );
-
-        /**
-         * datetime service register
-         */
-        $container->set(
-            'datetime',
-            function () {
-                $timestamp = time();
-                $date_time = date("d-m-Y (D) H:i:s", $timestamp);
-                return $date_time;
-            }
-        );
-        return $container;
     }
 }
