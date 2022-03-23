@@ -11,7 +11,7 @@ use Phalcon\Mvc\Application;
 use Phalcon\Url;
 use Phalcon\Db\Adapter\Pdo\Mysql;
 use Phalcon\Config;
-use Phalcon\Http\Response;
+
 
 $config = new Config([]);
 

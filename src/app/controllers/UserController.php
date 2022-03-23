@@ -15,6 +15,10 @@ class UserController extends Controller
     {
 
         $response = new Response();
+
+        /**
+         * di container call
+         */
         $container = $this->setd();
         $session = $container->get('session');
         $session->start();
@@ -23,14 +27,14 @@ class UserController extends Controller
         $check = $this->request->get('log');
 
         if (($log || $login) && $check != 'logout') {
+
+            /**
+             * fetching date time from datetime 
+             */
             $time = $container->get('datetime');
             $this->view->time = $time;
             $user = Users::find();
             $this->view->users = $user;
-            $userid = $session->get('user_id');
-            if ($userid) {
-                $this->view->check = 1;
-            }
         } else {
             $session->destroy();
             setcookie('login', 0, time() + (86400 * 30), "/");
@@ -38,10 +42,19 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * signupAction()
+     * controller function to handle signup view
+     *
+     * @return void
+     */
     public function signupAction()
     {
         $response = new Response();
-        if ($this->request->isPost() && $this->request->getPost('email') && $this->request->getPost()['name']) {
+        if (
+            $this->request->isPost() && $this->request->getPost('email')
+            && $this->request->getPost()['name'] && $this->request->getPost()['password']
+        ) {
             $user = new Users();
             $user->assign(
                 $this->request->getPost(),
@@ -61,29 +74,40 @@ class UserController extends Controller
                 $this->view->message = $user->getMessages();
             }
         } else {
-            $response->setStatusCode(400, 'Not Found');
-            $response->setContent("Sorry, the page doesn't exist");
-            $response->send();
             $this->view->message = 'please fill form!!';
         }
-
-        $this->view->message = $response->getStatusCode();
     }
 
-
+    /**
+     * loginAction
+     * controller to handle login view
+     *
+     * @return void
+     */
     public function loginAction()
     {
+
+        /**
+         * calling session di
+         */
         $container = $this->setd();
         $session = $container->get('session');
 
-
         $response = new Response();
+
+        /**
+         * checking for post request
+         */
         $check = $this->request->isPost();
         if ($check) {
             $email = $this->request->getPost()['email'];
             $password = $this->request->getPost()['password'];
             $data = Users::findFirst(['conditions' => "email = '$email' AND password = '$password'"]);
             if ($data) {
+
+                /**
+                 * if remember is checked setting cookie
+                 */
                 $remember = $this->request->getPost()['remember'];
                 if ($remember == 'on') {
                     $cookie = new Cookies('login', 1);
@@ -91,7 +115,6 @@ class UserController extends Controller
                     $response->send();
                     setcookie('login', 1, time() + (86400 * 30), "/");
                 }
-                $userid = $data->user_id;
                 $session->start();
                 $session->set('login', 1);
                 $session->login = 1;
@@ -99,6 +122,10 @@ class UserController extends Controller
             } else {
                 unset($_POST);
                 $_POST = array();
+
+                /**
+                 * sending response 403 if authentication fails
+                 */
                 $response->setStatusCode(403, 'Authentication Failed');
                 $response->setContent("Authenication failed");
                 $response->send();
@@ -108,14 +135,32 @@ class UserController extends Controller
         }
     }
 
+
+    /**
+     * getd()
+     * function to initialize Di object
+     *
+     * @return void
+     */
     public function getd()
     {
         return
             new Di();
     }
+
+    /**
+     * function to register various di services
+     *
+     * @return void
+     */
     public function setd()
     {
         $container = $this->getd();
+
+
+        /**
+         * session service register
+         */
         $container->set(
             'session',
             function () {
@@ -129,6 +174,10 @@ class UserController extends Controller
                 return $session;
             }
         );
+
+        /**
+         * datetime service register
+         */
         $container->set(
             'datetime',
             function () {
