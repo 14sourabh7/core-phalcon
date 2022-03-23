@@ -90,7 +90,8 @@ $container->set(
         $timestamp = time();
         $date_time = date("d-m-Y (D) H:i:s", $timestamp);
         return $date_time;
-    }
+    },
+    true
 );
 try {
     // Handle the request
