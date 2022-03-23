@@ -1,0 +1,24 @@
+<h2>Login</h2>
+
+<?php echo $this->tag->form(""); ?>
+
+<p>
+    <label for="email">email</label>
+    <?php echo $this->tag->textField("email"); ?>
+</p>
+
+<p>
+    <label for="password">password</label>
+    <?php echo $this->tag->textField("password"); ?>
+</p>
+<label for="remember">
+    <input type="checkbox" name='remember'> Remember me
+</label>
+<p>
+
+    <?php
+    // echo $user_id;
+    echo $this->tag->submitButton(["login", "class" => "btn btn-primary"]); ?>
+</p>
+
+</form>
