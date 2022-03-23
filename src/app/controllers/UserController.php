@@ -2,23 +2,23 @@
 
 use Phalcon\Mvc\Controller;
 use Phalcon\Http\Response;
+
 use Phalcon\Http\Response\Cookies;
+
 
 class UserController extends Controller
 {
 
     public function indexAction()
     {
-        $response = new Response();
 
-        /**
-         * di container call
-         */
+        $response = new Response();
 
         $session = $this->session;
         $session->start();
         $login = $session->get('login');
         $log = $_COOKIE['login'];
+
         $check = $this->request->get('log');
 
         if (($log || $login) && $check != 'logout') {
@@ -82,9 +82,7 @@ class UserController extends Controller
     public function loginAction()
     {
 
-        /**
-         * calling session di
-         */
+
         $session = $this->session;
 
         $response = new Response();
