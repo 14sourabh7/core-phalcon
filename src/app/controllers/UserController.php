@@ -15,7 +15,7 @@ class UserController extends Controller
         $response = new Response();
 
         $session = $this->session;
-        $session->start();
+
         $login = $session->get('login');
         $log = $_COOKIE['login'];
 
@@ -107,7 +107,7 @@ class UserController extends Controller
                     $response->send();
                     setcookie('login', 1, time() + (86400 * 30), "/");
                 }
-                $session->start();
+
                 $session->set('login', 1);
                 $session->login = 1;
                 return $response->redirect('/user');

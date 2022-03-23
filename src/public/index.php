@@ -81,6 +81,7 @@ $container->set(
             ]
         );
         $session->setAdapter($files);
+        $session->start();
         return $session;
     }
 );
