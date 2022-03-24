@@ -3,7 +3,7 @@
 use Phalcon\Mvc\Controller;
 use Phalcon\Http\Response;
 
-use Phalcon\Http\Response\Cookies;
+
 
 
 class UserController extends Controller
@@ -17,11 +17,13 @@ class UserController extends Controller
         $session = $this->session;
 
         $login = $session->get('login');
-        $log = $_COOKIE['login'];
+        // $log = $_COOKIE['login'];
+        $log = $this->cookies->get('login');
+        $checklog = $log->getValue();
 
         $check = $this->request->get('log');
 
-        if (($log || $login) && $check != 'logout') {
+        if (($checklog || $login) && $check != 'logout') {
 
             /**
              * fetching date time from datetime 
@@ -102,10 +104,12 @@ class UserController extends Controller
                  */
                 $remember = $this->request->getPost()['remember'];
                 if ($remember == 'on') {
-                    $cookie = new Cookies('login', 1);
-                    $response->setCookies($cookie);
-                    $response->send();
-                    setcookie('login', 1, time() + (86400 * 30), "/");
+                    // $cookie = new Cookies('login', 1);
+                    // $response->setCookies($cookie);
+                    // $response->send();
+                    // setcookie('login', 1, time() + (86400 * 30), "/");
+                    $this->cookies->set('login', 1, time() + (86400 * 30), "/");
+                    $this->cookies->send();
                 }
 
                 $session->set('login', 1);

@@ -85,6 +85,11 @@ $container->set(
         return $session;
     }
 );
+$container->set('cookies', function () {
+    $cookies = new Phalcon\Http\Response\Cookies();
+    $cookies->useEncryption(false);
+    return $cookies;
+}, true);
 $container->set(
     'datetime',
     function () {
