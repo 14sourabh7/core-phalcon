@@ -17,7 +17,6 @@ class UserController extends Controller
         $session = $this->session;
 
         $login = $session->get('login');
-        // $log = $_COOKIE['login'];
         $log = $this->cookies->get('login');
         $checklog = $log->getValue();
 
@@ -30,8 +29,8 @@ class UserController extends Controller
              */
             $time = $this->datetime;
             $this->view->time = $time;
-            $user = Users::find();
-            $this->view->users = $user;
+            $user = new Users();
+            $this->view->users = $user->getUsers();
         } else {
             $session->destroy();
             setcookie('login', 0, time() + (86400 * 30), "/");
@@ -96,7 +95,8 @@ class UserController extends Controller
         if ($check) {
             $email = $this->request->getPost()['email'];
             $password = $this->request->getPost()['password'];
-            $data = Users::findFirst(['conditions' => "email = '$email' AND password = '$password'"]);
+            $user = new Users();
+            $data = $user->checkUser($email, $password);
             if ($data) {
 
                 /**
@@ -104,10 +104,7 @@ class UserController extends Controller
                  */
                 $remember = $this->request->getPost()['remember'];
                 if ($remember == 'on') {
-                    // $cookie = new Cookies('login', 1);
-                    // $response->setCookies($cookie);
-                    // $response->send();
-                    // setcookie('login', 1, time() + (86400 * 30), "/");
+
                     $this->cookies->set('login', 1, time() + (86400 * 30), "/");
                     $this->cookies->send();
                 }
